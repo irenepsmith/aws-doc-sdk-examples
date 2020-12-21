@@ -1,4 +1,4 @@
-# README for AWS SDK for .NET documentation examples
+# README for AWS SDK for .NET version 3.5 documentation examples
 
 This is a collection of code examples for the AWS SDK for .NET public documentation.
 All of the code examples run on version 3.5 of the AWS SDK for .NET using version 3.1 of .NET Core.
