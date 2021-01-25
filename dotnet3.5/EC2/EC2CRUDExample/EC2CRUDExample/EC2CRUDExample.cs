@@ -23,9 +23,9 @@ namespace EC2CRUDExample
         private static AmazonEC2Client ec2Client;
 
         // Default values for the optional command line arguments.
-        private static string securityGroupName = "default";
-        private static string spotPrice = "0.003";
-        private static int instanceCount = 1;
+        private static string _securityGroupName = "default";
+        private static string _spotPrice = "0.003";
+        private static int _instanceCount = 1;
 
         static async Task Main(string[] args)
         {
@@ -40,8 +40,8 @@ namespace EC2CRUDExample
                 {
                     case "-s":
                         i++;
-                        securityGroupName = args[i];
-                        if (securityGroupName == string.Empty)
+                        _securityGroupName = args[i];
+                        if (_securityGroupName == string.Empty)
                         {
                             Console.WriteLine("The security group name cannot be blank");
                             Usage();
@@ -51,9 +51,9 @@ namespace EC2CRUDExample
                         break;
                     case "-p":
                         i++;
-                        spotPrice = args[i];
+                        _spotPrice = args[i];
                         double price;
-                        double.TryParse(spotPrice, out price);
+                        double.TryParse(_spotPrice, out price);
                         if (price < 0.001)
                         {
                             Console.WriteLine("The spot price must be > 0.001");
@@ -64,8 +64,8 @@ namespace EC2CRUDExample
                         break;
                     case "-c":
                         i++;
-                        int.TryParse(args[i], out instanceCount);
-                        if (instanceCount < 1)
+                        int.TryParse(args[i], out _instanceCount);
+                        if (_instanceCount < 1)
                         {
                             Console.WriteLine("The instance count must be > 0");
                             Usage();
@@ -96,7 +96,7 @@ namespace EC2CRUDExample
 
             Console.WriteLine("Creating spot instance request");
 
-            SpotInstanceRequest req = await RequestSpotInstanceAsync(ec2Client, amiId, securityGroupName, InstanceType, spotPrice, instanceCount);
+            SpotInstanceRequest req = await RequestSpotInstanceAsync(ec2Client, amiId, _securityGroupName, InstanceType, _spotPrice, _instanceCount);
 
             string id = req.SpotInstanceRequestId;
 
