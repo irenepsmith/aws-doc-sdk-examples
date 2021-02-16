@@ -30,6 +30,10 @@ namespace IAMUserExample
 
         static async Task Main()
         {
+            // Create an Amazon Identity Managements Service Group.
+
+            // Create a policy and add it to the group.
+
             // Create a new user.
             User readOnlyUser;
             var IAMClient = new AmazonIdentityManagementServiceClient();
@@ -38,16 +42,47 @@ namespace IAMUserExample
                 UserName = USER_NAME
             };
 
-            readOnlyUser = await CreateS3ReadOnlyUserAsync(IAMClient, userRequest);
+            readOnlyUser = await CreateNewUserAsync(IAMClient, userRequest);
 
-            // Show that the user can now access an S3 bucket.
+            // Add the new user to the group.
+
+            // Show that the user can now access Amazon Simple Storage Service
+            // (Amazon S3) by listing the buckets on the account.
             await ListS3BucketsAsync(readOnlyUser);
 
             // Delete the user.
             await DeleteS3ReadOnlyUserAsync(IAMClient, readOnlyUser);
         }
 
-        static async Task<User> CreateS3ReadOnlyUserAsync(AmazonIdentityManagementServiceClient client, CreateUserRequest request)
+        static async Task<CreateGroupResponse> CreateNewGroupAsync(
+            AmazonIdentityManagementServiceClient client,
+            string groupName)
+        {
+            var createGroupRequest = new CreateGroupRequest
+            {
+                GroupName = groupName
+            };
+
+            var response = await client.CreateGroupAsync(createGroupRequest);
+            
+        }
+
+        static async Task<bool> AddGroupPermissionsAsync(AmazonIdentityManagementServiceClient client, Group group)
+        {
+            // Add appropriate permissions so the new user can access S3 on
+            // a readonly basis.
+            var groupPolicyRequest = new PutGroupPolicyRequest
+            {
+                GroupName = group.GroupName,
+                PolicyName = "S3ReadOnlyAccess",
+                PolicyDocument = S3_READONLY_POLICY
+            };
+
+            var response = await client.PutGroupPolicyAsync(groupPolicyRequest);
+            return (response.HttpStatusCode == System.Net.HttpStatusCode.OK);
+        }
+
+        static async Task<User> CreateNewUserAsync(AmazonIdentityManagementServiceClient client, CreateUserRequest request)
         {
             try
             {
@@ -56,18 +91,6 @@ namespace IAMUserExample
                 // Show the information about the user from the response.
                 Console.WriteLine($"New user: {response.User.UserName} ARN = {response.User.Arn}.");
                 Console.WriteLine($"{response.User.UserName} has {response.User.PermissionsBoundary}.");
-
-                // Add appropriate permissions so the new user can access S3 on
-                // a readonly basis.
-                var userPolicyRequest = new PutUserPolicyRequest
-                {
-                    UserName = response.User.UserName,
-                    PolicyName = "S3ReadOnlyAccess",
-                    PolicyDocument = S3_READONLY_POLICY
-                };
-
-                await client.PutUserPolicyAsync(userPolicyRequest);
-                return response.User;
             }
             catch (EntityAlreadyExistsException ex)
             {
