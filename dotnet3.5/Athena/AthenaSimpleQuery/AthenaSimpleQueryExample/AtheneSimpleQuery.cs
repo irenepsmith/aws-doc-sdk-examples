@@ -1,4 +1,5 @@
-﻿using Amazon.Athena;
+﻿using Amazon;
+using Amazon.Athena;
 using Amazon.Athena.Model;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,9 @@ namespace AthenaSimpleQueryExample
     {
         private const String ATHENA_TEMP_PATH = "s3://doc-example-bucket/athena-temp/";
         private const String ATHENA_DB = "default";
-        private const static RegionEndpoint _region = AmazonRegionEndpoint.USEast1;
-        private AmazonAthenaClient _client;
+
+        private static readonly RegionEndpoint _region = RegionEndpoint.USEast1;
+        private static AmazonAthenaClient _client;
 
         static async Task Main()
         {
@@ -119,7 +121,7 @@ namespace AthenaSimpleQueryExample
                 }
             } while (resResp.NextToken != null);
 
-            /* Return List of dictionary per row containing column name and value */
+            // Return List of dictionary per row containing column name and value
             return items;
         }
     }

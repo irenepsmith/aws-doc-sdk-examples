@@ -1,4 +1,5 @@
 using System;
+using Moq;
 using Xunit;
 
 namespace AthenaSimpleQueryTest
@@ -6,9 +7,9 @@ namespace AthenaSimpleQueryTest
     public class AthenaSimpleQueryTest
     {
         [Fact]
-        public void Test1()
+        public void GetQueryExecutionTest()
         {
-
+            
         }
     }
 }
