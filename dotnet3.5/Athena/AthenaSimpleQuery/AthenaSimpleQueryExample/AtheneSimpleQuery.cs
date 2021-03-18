@@ -32,7 +32,7 @@ namespace AthenaSimpleQueryExample
 
         async static Task RunQuery(IAmazonAthena client, QueryExecutionContext qContext, ResultConfiguration resConf)
         {
-            /* Execute a simple query on a table */
+            // Execute a simple query on a table.
             StartQueryExecutionRequest qReq = new StartQueryExecutionRequest()
             {
                 QueryString = "SELECT * FROM cloudtrail_logs limit 10;",
@@ -66,7 +66,8 @@ namespace AthenaSimpleQueryExample
             List<Dictionary<String, String>> items = new List<Dictionary<String, String>>();
             GetQueryExecutionResponse results = null;
             QueryExecution q = null;
-            /* Declare query execution request object */
+
+            // Declare query execution request object.
             GetQueryExecutionRequest qReq = new GetQueryExecutionRequest()
             {
                 QueryExecutionId = id
@@ -92,7 +93,7 @@ namespace AthenaSimpleQueryExample
 
             Console.WriteLine($"Data Scanned for {id}: {q.Statistics.DataScannedInBytes} Bytes");
 
-            /* Declare query results request object */
+            // Declare query results request object.
             GetQueryResultsRequest resReq = new GetQueryResultsRequest()
             {
                 QueryExecutionId = id,
@@ -100,11 +101,12 @@ namespace AthenaSimpleQueryExample
             };
 
             GetQueryResultsResponse resResp = null;
-            /* Page through results and request additional pages if available */
+            // Page through results and request additional pages if available.
             do
             {
                 resResp = await client.GetQueryResultsAsync(resReq);
-                /* Loop over result set and create a dictionary with column name for key and data for value */
+                // Loop over result set and create a dictionary with column
+                // name for key and data for value.
                 foreach (Row row in resResp.ResultSet.Rows)
                 {
                     Dictionary<String, String> dict = new Dictionary<String, String>();
@@ -121,7 +123,7 @@ namespace AthenaSimpleQueryExample
                 }
             } while (resResp.NextToken != null);
 
-            // Return List of dictionary per row containing column name and value
+            // Return Dictionary List. Each row contains column name and value.
             return items;
         }
     }
